@@ -1,0 +1,28 @@
+---
+changed: false
+connection: close
+content: '[{"id":100899,"name":"sample","type":"IP4Network","properties":"CIDR=10.10.88.0/24|allowDuplicateHost=disable|inheritAllowDuplicateHost=true|pingBeforeAssign=disable|inheritPingBeforeAssign=true|gateway=10.10.88.1|inheritDefaultDomains=true|defaultView=100893|inheritDefaultView=true|inheritDNSRestrictions=true|"},{"id":100907,"name":"sample02","type":"IP4Network","properties":"CIDR=10.10.100.0/24|allowDuplicateHost=disable|inheritAllowDuplicateHost=true|pingBeforeAssign=disable|inheritPingBeforeAssign=true|gateway=10.10.100.1|inheritDefaultDomains=true|defaultView=100893|inheritDefaultView=true|inheritDNSRestrictions=true|"}]'
+content_length: '633'
+content_type: application/json
+cookies: {}
+cookies_string: ''
+elapsed: 0
+failed: false
+json:
+-   id: 100899
+    name: sample
+    properties: CIDR=10.10.88.0/24|allowDuplicateHost=disable|inheritAllowDuplicateHost=true|pingBeforeAssign=disable|inheritPingBeforeAssign=true|gateway=10.10.88.1|inheritDefaultDomains=true|defaultView=100893|inheritDefaultView=true|inheritDNSRestrictions=true|
+    type: IP4Network
+-   id: 100907
+    name: sample02
+    properties: CIDR=10.10.100.0/24|allowDuplicateHost=disable|inheritAllowDuplicateHost=true|pingBeforeAssign=disable|inheritPingBeforeAssign=true|gateway=10.10.100.1|inheritDefaultDomains=true|defaultView=100893|inheritDefaultView=true|inheritDNSRestrictions=true|
+    type: IP4Network
+msg: OK (633 bytes)
+redirected: false
+server: Bluecat Networks
+status: 200
+url: http://BAM/Services/REST/v1/searchByObjectTypes?count=100&start=0&types=IP4Network&keyword=*
+warnings:
+- The value True (type bool) in a string field was converted to 'True' (type string).
+    If this does not look like what you expect, quote the entire value to ensure it
+    does not change.

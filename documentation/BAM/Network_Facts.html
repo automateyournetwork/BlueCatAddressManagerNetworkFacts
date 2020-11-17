@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Markmap</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+#mindmap {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+</style>
+
+</head>
+<body>
+<svg id="mindmap"></svg>
+<script src="https://cdn.jsdelivr.net/npm/d3@6.2.0"></script><script src="https://cdn.jsdelivr.net/npm/markmap-view@0.1.1"></script><script>((getMarkmap, data) => {
+        const {
+          Markmap
+        } = getMarkmap();
+        window.mm = Markmap.create('svg#mindmap', null, data);
+      })(() => window.markmap,{"t":"heading","d":1,"p":{},"v":"BAM Network Facts","c":[{"t":"thead","d":3,"p":{},"v":"","c":[{"t":"th","d":5,"p":{},"v":"ID"},{"t":"th","d":5,"p":{},"v":"Name"},{"t":"th","d":5,"p":{},"v":"Type"},{"t":"th","d":5,"p":{},"v":"CIDR"},{"t":"th","d":5,"p":{},"v":"Allow Duplicate Host"},{"t":"th","d":5,"p":{},"v":"Inherit Allow Duplicate Host"},{"t":"th","d":5,"p":{},"v":"Ping Before Assign"},{"t":"th","d":5,"p":{},"v":"Inherit Ping Before Assign"},{"t":"th","d":5,"p":{},"v":"Gateway"},{"t":"th","d":5,"p":{},"v":"Inherit Default Domains"},{"t":"th","d":5,"p":{},"v":"Default View"},{"t":"th","d":5,"p":{},"v":"Inherit Default View"},{"t":"th","d":5,"p":{},"v":"Inherit DNS Restrictions"}]},{"t":"tbody","d":3,"p":{},"v":"","c":[{"t":"tr","d":4,"p":{},"v":"","c":[{"t":"td","d":5,"p":{},"v":"100899"},{"t":"td","d":5,"p":{},"v":"sample"},{"t":"td","d":5,"p":{},"v":"IP4Network"},{"t":"td","d":5,"p":{},"v":"10.10.88.0/24"},{"t":"td","d":5,"p":{},"v":"disable"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"disable"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"10.10.88.1"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"100893"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"true"}]},{"t":"tr","d":4,"p":{},"v":"","c":[{"t":"td","d":5,"p":{},"v":"100907"},{"t":"td","d":5,"p":{},"v":"sample02"},{"t":"td","d":5,"p":{},"v":"IP4Network"},{"t":"td","d":5,"p":{},"v":"10.10.100.0/24"},{"t":"td","d":5,"p":{},"v":"disable"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"disable"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"10.10.100.1"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"100893"},{"t":"td","d":5,"p":{},"v":"true"},{"t":"td","d":5,"p":{},"v":"true"}]}]}]})</script>
+</body>
+</html>

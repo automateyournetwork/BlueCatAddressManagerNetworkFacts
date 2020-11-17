@@ -1,0 +1,438 @@
+---
+
+- hosts: localhost
+
+# Prompt for BAM Username and Password to get Token #
+  vars_prompt:
+    - name: username
+      prompt: "Enter Username"
+      private: no
+    - name: password
+      prompt: "Enter Password"
+      private: yes
+
+  tasks:
+    - name: Set Variables
+      set_fact:
+        username: "{{ username }}"
+        password: "{{ password }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true
+
+# Get RAW Token #
+# Replace "BAM" with your BAM IP or Hostname #
+    - name: Get Token
+      uri:
+        url: http://BAM/Services/REST/v1/login?username={{ username }}&password={{ password }}
+        headers: 
+          Accept-Encoding: gzip, deflate, br
+          Accept: application/json
+          Content-Type: application/x-www-form-urlencoded
+          User-Agent: Jakarta Commons-HttpClient/3.1
+          host: cloudsso.cisco.com
+          Connection: keep-alive
+          Content-Length: 0
+        method: GET
+        return_content: yes
+        validate_certs: no
+        force_basic_auth: yes
+        follow_redirects: yes
+        body_format: json
+      register: rawtoken
+
+# RegEx Raw token to REAL token #
+    - name: Format token
+      set_fact: 
+        token: "{{ rawtoken.json | regex_replace('.*-> (.*) <-.*', '\\1') }}"
+
+# GET IP Network #
+# Replace BAM with your BAM IP or Hostname #
+    - name: GET Network Details
+      uri:
+        url: http://BAM/Services/REST/v1/searchByObjectTypes?count=100&start=0&types=IP4Network&keyword=*
+        method: GET
+        headers: 
+          Authorization: "{{ token }}"
+          Cache-Control: no-cache
+          Accept-Encoding: gzip, deflate, br
+          Connection: keep-alive
+          Accept: application/json 
+        return_content: yes
+        validate_certs: no
+        force_basic_auth: yes
+        follow_redirects: yes
+      register: network 
+
+# Create JSON file with Ansible Facts #
+    - name: Create RAW JSON file
+      copy: 
+        content: | 
+          {{ network }}
+        dest: ../documentation/BAM/Network_Facts_RAW.json
+
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ network | to_nice_json }}
+        dest: ../documentation/BAM/Network_Facts_Nice.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ network | to_nice_yaml }}
+        dest: ../documentation/BAM/Network_Facts.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../documentation/BAM/Network_Facts.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Set Facts #
+    - set_fact:
+        json_list: "{{ network['json'] }}"
+
+# CSV Section #
+# Create CSV file with results #
+    - name: Create CSV
+      copy: 
+        content: | 
+          {{ json_list }}
+        dest: ../documentation/BAM/Network_Facts.csv
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: '\[{|\}]|"'
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'id'
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'name'
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: ' type'
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'properties'
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: ' : '
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: ': '
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: '"'
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: '\|'
+        replace: ',' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'CIDR='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'allowDuplicateHost='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'inheritAllowDuplicateHost='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'inheritPingBeforeAssign='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'pingBeforeAssign='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'gateway='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'inheritDefaultDomains='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'defaultView='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'inheritDefaultView='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: 'inheritDNSRestrictions='
+        replace: '' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: ',}, {'
+        replace: '\n' 
+
+# Format CSV #
+    - name: Format CSV File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.csv
+        regexp: ',$'
+        replace: '' 
+
+# Add Header Row to CSV #
+    - name: Header Row
+      lineinfile:
+        path: ../documentation/BAM/Network_Facts.csv
+        insertbefore: BOF
+        line: ID,Name,Type,CIDR,Allow Duplicate Host,Inherit Allow Duplicate Host,Ping Before Assign,Inherit Ping Before Assign,Gateway,Inherit Default Domains,Default View,Inherit Default View,Inherit DNS Restrictions
+
+# Markdown Section #
+# Create Markdown file with results #
+    - name: Create Markdown
+      copy: 
+        content: | 
+          {{ json_list }}
+        dest: ../documentation/BAM/Network_Facts.md
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: '\[{|\}]|"'
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'id'
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'name'
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: ' type'
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'properties'
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: ' : '
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: ': '
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: '"'
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: '\|'
+        replace: ',' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'CIDR='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'allowDuplicateHost='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'inheritAllowDuplicateHost='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'inheritPingBeforeAssign='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'pingBeforeAssign='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'gateway='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'inheritDefaultDomains='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'defaultView='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'inheritDefaultView='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: 'inheritDNSRestrictions='
+        replace: '' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: ',}, {'
+        replace: '\n' 
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: ','
+        replace: ' | '        
+
+# Format Markdown #
+    - name: Format Markdown File Clean Up
+      replace:
+        path: ../documentation/BAM/Network_Facts.md
+        regexp: '^'
+        replace: '| '        
+
+# Add Header Rows to Markdown #
+    - name: Header Row
+      lineinfile:
+        path: ../documentation/BAM/Network_Facts.md
+        insertbefore: BOF
+        line: "{{ item.property }}"
+      with_items:
+        - { property: '| -- | ---- | ---- | ---- | -------------------- | ---------------------------- | ------------------ | -------------------------- | ------- | ----------------------- | ------------ | -------------------- | ------------------------ |' }
+        - { property: '| ID | Name | Type | CIDR | Allow Duplicate Host | Inherit Allow Duplicate Host | Ping Before Assign | Inherit Ping Before Assign | Gateway | Inherit Default Domains | Default View | Inherit Default View | Inherit DNS Restrictions |' }
+        - { property: '# BAM Network Facts' }      
+
+# Create Mind Map # 
+    - name: create BAM Network Facts Mind Map 
+      shell: "npx markmap-cli ../documentation/BAM/Network_Facts.md"
+      register: markmap
